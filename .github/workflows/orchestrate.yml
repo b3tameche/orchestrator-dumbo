@@ -1,0 +1,26 @@
+name: Orchestrate build Service
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Orchestrator Repo
+        uses: actions/checkout@v4
+      
+      - name: Read configs
+        id: read-config
+        run: |
+          echo "Reading Configs"
+  
+
+  trigger:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Trigger repo builds (sequential)
+        id: trigger
+        run: |
+          echo "Triggering sequential repo builds"
