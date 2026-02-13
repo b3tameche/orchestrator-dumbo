@@ -2,24 +2,24 @@ name: Orchestrate build Service
 
 on:
   workflow_dispatch:
-  inputs:
-    choiceVar:
-      description: 'Input of type: choice'
-      required: true
-      default: 'warning'
-      type: choice
-      options:
-      - info
-      - warning
-      - debug
-    boolVar:
-      description: 'Input of type: boolean'
-      required: false
-      type: boolean
-    envVar:
-      description: 'Input of type: environment'
-      type: environment
-      required: true
+    inputs:
+      choiceVar:
+        description: 'Input of type: choice'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      boolVar:
+        description: 'Input of type: boolean'
+        required: false
+        type: boolean
+      envVar:
+        description: 'Input of type: environment'
+        type: environment
+        required: true
 
 
 jobs:
