@@ -6,10 +6,10 @@ on:
 
 env:
   CHILDREN: |
-  [
-    "b3tameche/service-a-dumbo",
-    "b3tameche/service-b-dumbo"
-  ]
+    [
+      "b3tameche/service-a-dumbo",
+      "b3tameche/service-b-dumbo"
+    ]
 
 jobs:
   aggregate:
