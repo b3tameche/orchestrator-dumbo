@@ -25,6 +25,8 @@ jobs:
         with:
           path: .scoreboard
           key: corr-${{ github.event.client_payload.corr }}
+          restore-keys: |
+            corr-${{ github.event.client_payload.corr }}-
 
       - name: Ensure scoreboard directory
         run: mkdir -p .scoreboard
@@ -45,7 +47,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .scoreboard
-          key: corr-${{ github.event.client_payload.corr }}
+          key: corr-${{ github.event.client_payload.corr }}-${{ github.run_id }}
 
       # 4. decide whether to continue
       - name: Decide
