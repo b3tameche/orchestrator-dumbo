@@ -56,7 +56,9 @@ jobs:
           BOARD=".scoreboard/board.json"
           EXPECTED='${{ env.CHILDREN }}'
 
-          echo "$EXPECTED"
+          echo "Children: $EXPECTED"
+
+          cat "$BOARD"
 
           ok=$(jq --argjson exp "$EXPECTED" \
                   '($exp | all(. as $e | has($e))) and
