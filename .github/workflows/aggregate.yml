@@ -60,11 +60,10 @@ jobs:
 
           cat "$BOARD"
 
-          ok=$(jq --argjson exp "$EXPECTED" \
-                  '($exp | all(. as $e | has($e))) and
-                   (.[]
-                     | select(.!="success")
-                     | not)' "$BOARD")
+          ok=$(jq --argjson exp "$EXPECTED" '
+            ($exp | all(. as $e | .[$e]? == "success"))
+          ' "$BOARD")
+
           echo "continue=$ok" >>"$GITHUB_OUTPUT"
 
       # 5. continue once all succeeds
