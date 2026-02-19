@@ -5,7 +5,7 @@ on:
     types: [child-finished]
 
 env:
-  CHILDREN: '["b3tameche/service-a","b3tameche/service-b"]'
+  CHILDREN: '["b3tameche/service-a-dumbo","b3tameche/service-b-dumbo"]'
 
 jobs:
   aggregate:

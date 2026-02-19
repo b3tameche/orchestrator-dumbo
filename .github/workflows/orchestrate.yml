@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo: [service-a, service-b]
+        repo: [service-a-dumbo, service-b-dumbo]
     steps:
       - name: Correlation id
         id: corr
