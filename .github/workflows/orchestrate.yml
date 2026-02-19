@@ -1,57 +1,27 @@
-name: Orchestrate build Service
+name: Orchestrate children
 
 on:
   workflow_dispatch:
-    inputs:
-      choiceVar:
-        description: 'Input of type: choice'
-        required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-      boolVar:
-        description: 'Input of type: boolean'
-        required: false
-        type: boolean
-      envVar:
-        description: 'Input of type: environment'
-        type: environment
-        required: true
 
+env:
+  CHILDREN: '["service-a","service-b"]'
 
 jobs:
-  echo_inputs:
+  fanout:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo: ${{ fromJson(env.CHILDREN) }}
     steps:
-      - run: |
-          echo "choiceVar: $CHOICEVAR"
-          echo "boolVar: $BOOLVAR"
-          echo "envVar: $ENVVAR"
-        env:
-          CHOICEVAR: ${{ inputs.choiceVar }}
-          BOOLVAR: ${{ inputs.boolVar }}
-          ENVVAR: ${{ inputs.envVar }}
+      - name: Correlation id
+        id: corr
+        run: echo "id=${{ github.run_id }}" >> "$GITHUB_OUTPUT"
 
-  prepare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Orchestrator Repo
-        uses: actions/checkout@v4
-      
-      - name: Read configs
-        id: read-config
-        run: |
-          echo "Reading Configs"
-  
-
-  trigger:
-    runs-on: ubuntu-latest
-    needs: prepare
-    steps:
-      - name: Trigger repo builds (sequential)
-        id: trigger
-        run: |
-          echo "Triggering sequential repo builds"
+      - name: Trigger ${{ matrix.repo }}
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: b3tameche/${{ matrix.repo }}
+          event-type: build-external
+          client-payload: |
+            { "corr": "${{ steps.corr.outputs.id }}" }

@@ -2,6 +2,3 @@ name: service-a
 repo: b3tameche/service-b-dumbo
 workflow: build.yml
 branch: main
-build_config:
-  app_version: "1.0.0"
-  environment: "dev"

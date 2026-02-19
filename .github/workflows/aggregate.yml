@@ -1,0 +1,68 @@
+name: Aggregate child results & deploy
+
+on:
+  repository_dispatch:
+    types: [child-finished]
+
+env:
+  CHILDREN: '["b3tameche/service-a","b3tameche/service-b"]'
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write  # needed for cache save
+    steps:
+      # 1. restore scoreboard
+      - name: Restore scoreboard from cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .scoreboard
+          key: corr-${{ github.event.client_payload.corr }}
+
+      - name: Ensure scoreboard directory
+        run: mkdir -p .scoreboard
+
+      # 2. merge current result
+      - name: Update board.json
+        run: |
+          BOARD=".scoreboard/board.json"
+          jq -n \
+            --arg child  "${{ github.event.client_payload.child }}" \
+            --arg status "${{ github.event.client_payload.conclusion }}" \
+            --argjson prev "$(cat $BOARD 2>/dev/null || echo '{}')" \
+            '$prev + {($child): $status}' >"$BOARD"
+          cat "$BOARD"
+
+      # 3. save new cache state
+      - name: Save scoreboard back to cache
+        uses: actions/cache/save@v4
+        with:
+          path: .scoreboard
+          key: corr-${{ github.event.client_payload.corr }}
+
+      # 4. decide whether to continue
+      - name: Decide
+        id: decide
+        run: |
+          BOARD=".scoreboard/board.json"
+          EXPECTED=${{ env.CHILDREN }}
+
+          ok=$(jq --argjson exp "$EXPECTED" \
+                  '($exp | all(. as $e | has($e))) and
+                   (.[]
+                     | select(.!="success")
+                     | not)' "$BOARD")
+          echo "continue=$ok" >>"$GITHUB_OUTPUT"
+
+      # 5. continue once all succeeds
+      - name: Deploy
+        if: steps.decide.outputs.continue == 'true'
+        run: |
+          echo "ALL GOOD"
+
+    concurrency:
+      group: continue-${{ github.event.client_payload.corr }}
+      cancel-in-progress: false
