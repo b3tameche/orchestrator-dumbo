@@ -5,7 +5,11 @@ on:
     types: [child-finished]
 
 env:
-  CHILDREN: '[b3tameche/service-a-dumbo, b3tameche/service-b-dumbo]'
+  CHILDREN: |
+  [
+    "b3tameche/service-a-dumbo",
+    "b3tameche/service-b-dumbo"
+  ]
 
 jobs:
   aggregate:
@@ -49,6 +53,8 @@ jobs:
         run: |
           BOARD=".scoreboard/board.json"
           EXPECTED=${{ env.CHILDREN }}
+
+          echo "$EXPECTED"
 
           ok=$(jq --argjson exp "$EXPECTED" \
                   '($exp | all(. as $e | has($e))) and
