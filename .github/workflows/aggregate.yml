@@ -51,8 +51,10 @@ jobs:
       - name: Decide
         id: decide
         run: |
+          set -euo pipefail
+
           BOARD=".scoreboard/board.json"
-          EXPECTED=${{ env.CHILDREN }}
+          EXPECTED='${{ env.CHILDREN }}''
 
           echo "$EXPECTED"
 
