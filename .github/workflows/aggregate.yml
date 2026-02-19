@@ -62,9 +62,7 @@ jobs:
 
           cat "$BOARD"
 
-          ok=$(jq --argjson keys "$EXPECTED" \
-            '. as $obj | ($keys | all(. as $k | $obj | has($k) and .[$k] == "success"))'
-          )
+          ok=$(jq --argjson keys "$EXPECTED" '. as $obj | ($keys | all(. as $k | $obj | has($k) and .[$k] == "success"))' "$BOARD")
 
           echo "ok result: $ok"
 
