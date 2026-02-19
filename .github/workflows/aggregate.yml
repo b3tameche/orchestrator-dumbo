@@ -60,9 +60,9 @@ jobs:
 
           cat "$BOARD"
 
-          ok=$(jq --argjson exp "$EXPECTED" '
-            ($exp | all(. as $e | .[$e]? == "success"))
-          ' "$BOARD")
+          ok=$(jq --argjson keys "$EXPECTED" \
+            '. as $obj | ($keys | all(. as $k | $obj | has($k) and .[$k] == "success"))'
+          )
 
           echo "continue=$ok" >>"$GITHUB_OUTPUT"
 
